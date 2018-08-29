@@ -1,0 +1,69 @@
+Level1                      Level2                    Level3
+
+Integrated Circuit          
+- Power
+-- LDO
+-- Buck
+-- Buck/Boost
+-- Boost
+-- Spannungsüberwachung
+-- Stromregelung
+-- Messung
+- Logik
+-- Gatter
+-- 
+- MCU
+- CPU
+- SoC
+- FPGA/PLD
+- Flash
+- RAM
+-- SRAM
+-- FRAM
+-- DDR
+-- DDR2
+-- DDR3
+-- DDR4
+- Sonst. Speicher
+-- eMMC
+-- SD
+- Interface
+-- USB
+-- Ethernet
+-- RSxxx
+-- WiFi
+-- Bluetooth
+-- Port Expander
+-- 
+- 
+
+
+
+Passive
+- Widerstand
+- Induktivität
+- Kapazität
+- 
+
+Mecahnisch
+
+Optoelektronik
+- LED
+- Optokoppler
+- Diode
+
+
+Connector
+- Stiftleistse
+- Wannenstecker
+- FFC
+- 
+
+PCB
+- X
+
+Module
+- RF
+- Power
+- SoC/CPU/MCU
+

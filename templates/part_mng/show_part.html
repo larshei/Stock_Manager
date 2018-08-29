@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Part {{part.orderingCode}}{% endblock %}
+
+{% block content %}
+
+<div>
+Info on Part ID {{part.id}}<br>
+
+Manufacturer:   {{part.Manufacturer}}<br>
+Ordering Code:  {{part.orderingCode}}<br>
+</div>
+
+{% endblock %}

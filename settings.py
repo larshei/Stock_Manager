@@ -11,3 +11,4 @@ SQLALCHEMY_DATABASE_URI = DB_URI
 print DB_URI
 UPLOADED_IMAGES_DEST = '/home/ubuntu/workspace/flask_blog/static/images'
 UPLOADED_IMAGES_URL = '/static/images/'
+SQLALCHEMY_TRACK_MODIFICATIONS = False

@@ -20,4 +20,4 @@ configure_uploads(app, uploaded_images)
 
 from blog import views
 from author import views
-
+from part_mng import views

@@ -62,7 +62,7 @@ def setup():
     return render_template('blog/setup.html', form=form)
 
 @app.route('/post', methods=('GET', 'POST'))
-@author_required
+#@author_required
 def post():
     form = PostForm()
     if form.validate_on_submit():
