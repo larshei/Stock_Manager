@@ -59,4 +59,3 @@ def get_packages():
 class PackageAddAlternativeNameForm(Form):
     name = StringField('Case Name', [validators.Required(), 
                                      validators.length(max=20)])
-    packageSelect = QuerySelectField('Package', query_factory=get_packages, get_label='name')

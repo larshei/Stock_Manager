@@ -32,10 +32,18 @@ def part_showById(id):
     part = Part.query.filter_by(id=id).first()
     return render_template('/part_mng/part_showId.html', part=part)
 
-@app.route('/package/show/<int:id>')
+@app.route('/package/show/<int:id>', methods=('GET', 'POST'))
 def package_showById(id):
+    form = PackageAddAlternativeNameForm()
+    if form.validate_on_submit():
+        alt = AltPackage(
+            form.name.data,
+            id
+        )
+        db.session.add(alt)
+        db.session.commit()
     package = Package.query.filter_by(id=id).first()
-    return render_template('/part_mng/package_showId.html', package=package)
+    return render_template('/part_mng/package_showId.html', package=package, form=form)
 
 @app.route('/package/add', methods=('GET', 'POST'))
 def package_add():
@@ -53,20 +61,6 @@ def package_add():
         db.session.commit()
         return redirect(url_for('package_showById', id=package.id))
     return render_template("part_mng/package_add.html", form=form);
-
-@app.route('/package/addAlt', methods=('GET', 'POST'))
-def package_addAlt():
-    form = PackageAddAlternativeNameForm()
-    if form.validate_on_submit():
-        alt = AltPackage(
-            form.name.data,
-            form.packageSelect.data.id
-        )
-        db.session.add(alt)
-        db.session.commit()
-        return redirect(url_for('package_showById', id=form.packageSelect.data.id))
-    return render_template("part_mng/package_addAlternative.html", form=form)
-
 
 @app.route('/package/showall')
 def package_showAll():
