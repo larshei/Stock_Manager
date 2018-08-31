@@ -6,25 +6,24 @@ class Part(db.Model):
     orderingCode    = db.Column(db.String(40))
     case_id         = db.Column(db.Integer, db.ForeignKey('package.id'))
 
-    def __init__(self, manufacturer, orderingCode, category_id):
+    def __init__(self, manufacturer, orderingCode, case_id):
         self.manufacturer   = manufacturer
         self.orderingCode   = orderingCode
-        self.category       = category
+        self.case_id        = case_id
 
     def __repr__(self):
         return '<Part: %r %r>' % (self.manufacturer, self.orderingCode) 
 
 
-
 class Package(db.Model):
     id              = db.Column(db.Integer, primary_key=True)
-    name            = db.Column(db.String(20))
+    name            = db.Column(db.String(30), unique=True)
     pin_count       = db.Column(db.Integer)
-    pitch           = db.Column(db.Integer)
-    width           = db.Column(db.Integer)
-    length          = db.Column(db.Integer)
-    height          = db.Column(db.Integer)
-    alt_names       = db.relationship('AltPackages', backref='case', lazy='dynamic')
+    pitch           = db.Column(db.Float)
+    width           = db.Column(db.Float)
+    length          = db.Column(db.Float)
+    height          = db.Column(db.Float)
+    alt_names       = db.relationship('AltPackage', backref='package', lazy='dynamic')
     parts           = db.relationship('Part', backref='package', lazy='dynamic')
 
     def __init__(self, name, pin_count, pitch, width, length, height):
@@ -36,23 +35,20 @@ class Package(db.Model):
         self.height          = height
 
     def __repr__(self):
-        return '<Case: %r, alternative names: %r>' % (self.name)
+        return '<Package: %r>' % self.name
 
-class AltPackages(db.Model):
+class AltPackage(db.Model):
     id                  = db.Column(db.Integer, primary_key=True)
     name                = db.Column(db.String(20), unique=True)
     parent_package_id   = db.Column(db.Integer, db.ForeignKey('package.id'))
 
-    def __init__(self, name):
+    def __init__(self, name, parent_id):
         self.name = name
+        self.parent_package_id = parent_id
 #        self.parent_case_id = parent_case_id
     
-    def __repr__():
-        return '<Case Alternate name: %r>' % (self.name)
-
-
-
-
+    def __repr__(self):
+        return '<Case Alternate name: %r>' % self.name
 
 # class DistributorOfPart(db.Model):
 #     id              = db.Column(db.Integer, primary_key=True)

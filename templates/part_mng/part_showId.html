@@ -7,8 +7,9 @@
 <div>
 Info on Part ID {{part.id}}<br>
 
-Manufacturer:   {{part.Manufacturer}}<br>
+Manufacturer:   {{part.manufacturer}}<br>
 Ordering Code:  {{part.orderingCode}}<br>
+Package:  <a href="{{url_for('package_showById', id=part.package.id)}}">{{part.package.name}}</a><br>
 </div>
 
 {% endblock %}

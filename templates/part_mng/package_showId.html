@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Part {{package.name}}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-offste-3 col-md-6">
+
+        <h3>{{package.name}}</h3>
+        <ul class="list-inline">
+        {% for item in package.alt_names %}
+            <li>{{item.name}}</li>
+        {% endfor %}
+        </ul>
+
+        <hr>
+        Pin Count:  {{package.pin_count}}
+        <hr>
+
+        <h4>used by parts</h4>
+        <ul class="list-inline">
+            {% for item in package.parts %}
+            <li><a class="block" href="{{url_for('part_showById', id=item.id)}}">{{item.orderingCode}}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+
+{% endblock %}

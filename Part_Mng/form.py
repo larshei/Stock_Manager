@@ -2,6 +2,7 @@ from flask_wtf import Form
 from wtforms import validators, StringField, DecimalField,  PasswordField, IntegerField
 from wtforms.fields.html5 import EmailField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
+from Part_Mng.models import Package, AltPackage
 
 class RegisterForm(Form):
     fullname = StringField('Full Name', [validators.Required()])
@@ -27,21 +28,20 @@ class LoginForm(Form):
             validators.Length(min=4, max=80)
         ])
 
-def cases():
-    return Case.query
+def get_packages():
+    return Package.query
 
 class PartAddForm(Form):
     manufacturer = StringField('Manufacturer', [validators.Required(), 
-                                                validators.length(max=40)])
+                                                validators.length(min=1, max=40)])
     orderingCode = StringField('Ordering Code', [validators.Required(), 
-                                                validators.length(max=40)])
-    category = QuerySelectField('Case', query_factory=cases, allow_blank=True)
+                                                validators.length(min=1, max=40)])
+    packageSelect = QuerySelectField('Package', query_factory=get_packages, get_label='name', allow_blank=True)
+
+    # TODO add category selection. Allow category/case to be added on the fly?
 
 
-    # TODO add category and Case selection. Allow category/case to be added on the fly?
-
-
-class CaseAddForm(Form):
+class PackageAddForm(Form):
     name = StringField('Case Name', [validators.Required(), 
                                      validators.length(max=20)])
     pin_count       = IntegerField('Pin Count',  [validators.Required()])
@@ -52,3 +52,11 @@ class CaseAddForm(Form):
     
     #TODO is there a type that allows e.g. "tags" or "comma seperated list"??
     # alternateNames = tagFiel('Alternate Names')
+
+def get_packages():
+    return Package.query
+
+class PackageAddAlternativeNameForm(Form):
+    name = StringField('Case Name', [validators.Required(), 
+                                     validators.length(max=20)])
+    packageSelect = QuerySelectField('Package', query_factory=get_packages, get_label='name')

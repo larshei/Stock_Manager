@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}{{count}} Packages{% endblock %}
+
+{% block content %}
+<div class="col-md-12 item-list">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+            <table class="table table-sm table-hover">
+            <tr>
+                <th>Name</th>
+                <th>Pin Count</th>
+                <th>Equals</th>
+
+            </tr>
+            {% for package in packages %}
+            <tr>
+            <td><a href="{{ url_for('package_showById', id=package.id)}}">{{package.name}}</a></td>
+            <td>{{package.pin_count}}</td>
+            <td>{% for item in package.alt_names %}
+                {{item.name}}<br>
+                {% endfor %}
+            </td>
+            </tr>
+            {% endfor %}
+
+            </table>
+            </div>      
+        </div>
+    </div>
+</div>
+
+{% endblock %}
