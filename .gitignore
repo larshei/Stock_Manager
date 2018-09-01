@@ -9,3 +9,4 @@ venv
 migrations
 static/images/*
 uploads/*
+generated/*
