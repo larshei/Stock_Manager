@@ -16,7 +16,8 @@ md = Markdown(app, extensions=['fenced_code', 'tables'])
 
 # images
 uploaded_images = UploadSet('images', IMAGES)
-configure_uploads(app, uploaded_images)
+uploaded_tables = UploadSet('tables', extensions=('xls','xlsx'))
+configure_uploads(app, (uploaded_images, uploaded_tables))
 
 from blog import views
 from author import views

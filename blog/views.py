@@ -68,10 +68,8 @@ def post():
     if form.validate_on_submit():
         image = request.files.get('image')
         filename = None
-        try:
-            filename = uploaded_images.save(image)
-        except:
-            flash("The image was not uploaded")
+        filename = uploaded_images.save(image)
+
         if form.new_category.data:
             new_category = Category(form.new_category.data)
             db.session.add(new_category)

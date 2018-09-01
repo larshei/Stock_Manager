@@ -8,6 +8,7 @@
 
     <!-- Bootstrap -->
     <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    {% block head %}{% endblock %}
 
   </head>
   <body>
@@ -36,6 +37,7 @@
             </div>
       </div>
 
+      {% include '_flashmessages.html' %}
 
     {% block content %}{% endblock %}
     

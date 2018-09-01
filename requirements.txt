@@ -8,3 +8,4 @@ py-bcrypt
 python-slugify
 Flask-Markdown
 Flask-Uploads
+openpyxl

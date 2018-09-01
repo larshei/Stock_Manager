@@ -1,5 +1,6 @@
 from flask_wtf import Form
-from wtforms import validators, StringField, DecimalField,  PasswordField, IntegerField
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import validators, StringField, DecimalField,  PasswordField, IntegerField, RadioField
 from wtforms.fields.html5 import EmailField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from Part_Mng.models import Package, AltPackage
@@ -36,6 +37,8 @@ class PartAddForm(Form):
                                                 validators.length(min=1, max=40)])
     orderingCode = StringField('Ordering Code', [validators.Required(), 
                                                 validators.length(min=1, max=40)])
+    name         = StringField('Part Name',     [validators.Required(), 
+                                                validators.length(min=1, max=40)])
     packageSelect = QuerySelectField('Package', query_factory=get_packages, get_label='name', allow_blank=True)
 
     # TODO add category selection. Allow category/case to be added on the fly?
@@ -59,3 +62,6 @@ def get_packages():
 class PackageAddAlternativeNameForm(Form):
     name = StringField('Case Name', [validators.Required(), 
                                      validators.length(max=20)])
+class UploadXlsForm(Form):
+    import_type = RadioField('What do you want to import?', choices=[('part','Parts'),('package','Packages'),('assembly','Assembly')])
+    import_file = FileField('File to Upload', validators=[FileAllowed(['xls','xlsx'], 'Excel Table Files')])
