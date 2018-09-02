@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{%block title %}Stock Manager{% endblock %}
+
+
+{% block content %}
+     
+<div class="col-md-offset-2 col-md-8">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>LMS Part, Stock and Assembly Management System</h2>
+        </div>
+    </div>
+    <div class="col-md-12">
+        This system is meant to help small teams organize their electronic components. 
+        Create parts and assemblies, print bill of materials, import or export excel files
+        and manage your stock. You may also use the internal time tracking mechanism to keep
+        track on what your time was spent on.<br>
+        <br>
+        <strong>Bold</strong> items are currently implemented
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Part Management</h3>
+            <ul>
+                <li><strong>Create</strong>, import or <strong>export</strong> packages. Packages may have multiple names.</li>
+                <li><strong>Create</strong>, import or <strong>export</strong> parts that use formerly defined packages.</li>
+                <li>Add ordering information to parts</li>
+                <li>Search for parts</li>
+                <li>Check what systems/assemblies a part is used in</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Assembly Management</h3>
+            <ul>
+                <li> or import assemblies. These are collections of parts that specify
+                    which and how many parts are used to build a system.</li>
+                <li>Search for and view assemblies</li>
+                <li>Import/Export bill of materials</li>
+                <li>Export a list of parts that are needed for a given number of systems to be built.
+                    If used with the Stock Manager, the list will contain the number of parts available
+                    and the number of parts that are missing</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Stock Management</h3>
+            <ul>
+                <li>Keep track of your stock: How many parts are available and where are they stored?</li>
+                <li>Move parts, combine batches of parts or split parts into multiple batches</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Time Tracking</h3>
+            <ul>
+                <li>Track your time at work</li>
+                <li>Create projects and tasks</li>
+                <li>Start and stop time logging on a specigied task with a few clicks</li>
+                <li>Get an overview of time spend on different tasks for a specific project</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

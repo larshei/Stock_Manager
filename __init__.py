@@ -22,3 +22,5 @@ configure_uploads(app, (uploaded_images, uploaded_tables))
 from blog import views
 from author import views
 from part_mng import views
+from package_mng import views
+from xls_import_export import views

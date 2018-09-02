@@ -12,7 +12,7 @@
      
 <div class="col-md-offset-3 col-md-6">
     <form method="POST" action="{{ url_for('file_upload')}}" enctype="multipart/form-data" role="form">
-        <h4>Import Excel Table to Database</h4>
+        <h2>Import Excel Table to Database</h2>
         {{ form.hidden_tag() }}
         {{ render_field(form.import_type, class="form-radio")}}
         {{ render_field(form.import_file, class="form-control")}}

@@ -11,14 +11,6 @@ from flask_uploads import UploadNotAllowed
 
 POSTS_PER_PAGE = 5
 
-@app.route('/')
-@app.route('/index')
-@app.route('/index/<int:page>')
-def index(page=1):
-    blog = Blog.query.first()
-    posts = Post.query.filter_by(live=True).order_by(Post.publish_date.desc()).paginate(page, POSTS_PER_PAGE, False)
-    return render_template('blog/index.html', blog=blog, posts=posts)
-
 @app.route('/admin')
 @app.route('/admin/<int:page>')
 @login_required
