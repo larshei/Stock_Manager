@@ -1,13 +1,13 @@
 import os
 from Stock_Manager import app, db
 from werkzeug import secure_filename
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
+from openpyxl.utils import column_index_from_string, coordinate_from_string
 from datetime import datetime
 from part_mng.models import Part
 from package_mng.models import Package, AltPackage
-from xls_import_export.form import FileUploadForm
-from flask import render_template, redirect, request, url_for, flash
-
+from xls_import_export.form import FileUploadForm, MapTableColumnsForPartForm, MapTableColumnsForPackageForm
+from flask import render_template, redirect, request, url_for, flash, send_from_directory
 
 # #############################################################################
 #
@@ -19,6 +19,8 @@ from flask import render_template, redirect, request, url_for, flash
 # creates a workbook in memory. Writes a header line based on the column
 # names of the given database_table. Then querys all items in the database
 # and stores their values in the workbook. Saves file when done.
+# unfortunately this does not work if data based on table relationships 
+# is needed (as only the id of the foreignKey will be stored)
 def create_download_file(database_orm_obj, prefix=""):
     book = Workbook()
     sheet = book.active # currently active worksheet (default 0)
@@ -35,17 +37,57 @@ def create_download_file(database_orm_obj, prefix=""):
     datetimestr = datetime.utcnow().strftime("%Y-%m-%d_%H-%M")
     sheet.title = prefix + datetimestr
     book.save("generated/%s.xlsx" % sheet.title)
+    return sheet.title+'.xlsx'
 
+
+def create_download_file_finish(book, prefix):
+    datetimestr = datetime.utcnow().strftime("%Y-%m-%d_%H-%M")
+    sheet = book.active
+    sheet.title = prefix + datetimestr
+    book.save("generated/%s.xlsx" % sheet.title)
+    return sheet.title+'.xlsx'
 
 @app.route('/download/part', methods=['POST'])
 def part_downloadXls():
-    create_download_file(database_orm_obj = Part, prefix="Part_" )
-    return redirect(url_for('part_showAll'))
+    book = Workbook()
+    sheet = book.active # currently active worksheet (default 0)
+    row = ('Name','Manufacturer','Ordering Code','Package')
+    sheet.append(row)
+    for part in Part.query.all():
+        row = ( part.name,
+                part.manufacturer,
+                part.orderingCode,
+                part.package.name
+              )
+        sheet.append(row)
+    filename = create_download_file_finish(book = book, prefix='part_')
+    print app.config['GENERATED_DOWNLOADS_FOLDER']+filename
+    return send_from_directory(directory=app.config['GENERATED_DOWNLOADS_FOLDER'],
+                               filename=filename, as_attachment=True)
 
 @app.route('/download/package', methods=['POST'])
 def package_downloadXls():
-    create_download_file(database_orm_obj = Package, prefix="Package_" )
-    return redirect(url_for('package_showAll'))
+    book = Workbook()
+    sheet = book.active # currently active worksheet (default 0)
+    row = ('Name','Pin Count','Pitch','Length', 'Width','Height', 'Alternative Names')
+    sheet.append(row)
+    for package in Package.query.all():
+        alt_name_list = []
+        for alt in package.alt_names:
+            alt_name_list.append(alt.name)
+        alt_names_string = ", ".join(alt_name_list)
+        row = ( package.name,
+                package.pin_count,
+                package.pitch,
+                package.length,
+                package.width,
+                package.height,
+                alt_names_string
+              )
+        sheet.append(row)
+    filename = create_download_file_finish(book=book, prefix='package_')
+    return send_from_directory(directory=app.config['GENERATED_DOWNLOADS_FOLDER'],
+                               filename=filename, as_attachment=True)
 
 
 # #############################################################################
@@ -54,17 +96,203 @@ def package_downloadXls():
 #
 # #############################################################################
 
+def getTableHeaders(filepath):
+    print filepath
+    wb = load_workbook(filename=filepath, read_only=True)
+    sheet = wb.active
+    col_headings = []
+    index = 0
+    dim = sheet.calculate_dimension()
+    dim = dim.split(':')
+    xy = coordinate_from_string(dim[1])
+    max_col = column_index_from_string(xy[0])
+    for row in sheet.iter_rows(min_row=1, min_col=1, max_row=1, max_col=max_col):
+        for cell in row:
+            index += 1
+            if cell.value != None:
+                col_headings.append((index, cell.value))
+    return col_headings
+
 @app.route('/file/upload', methods=('GET', 'POST'))
 def file_upload():
     form = FileUploadForm()
     if form.validate_on_submit():
         table = request.files['import_file']
-        table.save("uploads/"+form.import_type.data+"/"+secure_filename(table.filename))
+        content_type = form.import_type.data
+        filename = "uploads/"+content_type+"/"+secure_filename(table.filename)
+        table.save(filename)
         flash('File uploaded', 'success')
-
-        #return redirect(url_for('part_showAll'))
+        return redirect(url_for('file_process', content_type=content_type, filename=secure_filename(table.filename)))
     return render_template('xls_import_export/upload.html', form=form)
 
-@app.route('/file/process/<content_type>/<filename>')
+@app.route('/file/prepare/<content_type>/<filename>', methods=['GET','POST'])
 def file_process(content_type, filename):
-    return render_template()
+    filepath = 'uploads/'+content_type+'/'+filename
+    choices = getTableHeaders(filepath)
+
+    if content_type == 'part':
+        form = MapTableColumnsForPartForm()
+        form.manufacturer.choices = choices
+        form.order_code.choices = choices
+        form.part_name.choices = choices
+        form.package.choices = choices
+        if form.validate_on_submit():
+            import_parts(filepath=filepath, form=form)
+    elif content_type == 'package':
+        form = MapTableColumnsForPackageForm()
+        form.name.choices = choices
+        form.pin_count.choices = choices
+        form.pitch.choices = choices
+        form.width.choices = choices
+        form.length.choices = choices
+        form.height.choices = choices
+        form.alt_package.choices = choices
+        if form.validate_on_submit():
+            import_packages(filepath=filepath, form=form)
+    elif content_type == 'assembly':
+        form = None
+    else:
+        form = None
+    return render_template('xls_import_export/map_columns.html', form=form, content_type=content_type, filename = filename)
+
+def import_parts(filepath, form):
+    book = load_workbook(filename=filepath, read_only=True)
+    sheet = book.active
+    obj_to_add_to_db = create_partlist_from_part_sheet(form=form, sheet=sheet, max_row=1000)
+    addToDatabase(obj_to_add_to_db)
+
+def create_partlist_from_part_sheet(form, sheet, max_row):
+    obj_to_add_to_db = []
+    identifiers_to_add = []
+    sheet_dim = calc_and_limit_sheet_dim(sheet, 0, max_row)
+    row_count = sheet_dim[1]
+    
+    for index in range(2, row_count):
+        # first lets make sure this part does not exist
+        identifier = sheet.cell(row=index, column=form.order_code.data).value
+        if identifier == None:
+            pass
+        elif part_in_db(ordering_code=identifier):
+            flash('Duplicate identifier \"%s\" was already found in database, ignored' % identifier, "warning")
+        elif duplicate_in_file(searchfor=identifier, inlist=identifiers_to_add):
+            flash('Identifier \"%s\" was found twice in import file, second instance ignored' % identifier, "warning")
+        else:
+            #if the part does not exist, make sure we have the package!
+            package_name = sheet.cell(row=index, column=form.package.data).value
+            package_id = package_in_db_get_id_or_none(name=package_name)
+            if package_id == None:
+                flash('no case \"%s\" found' % package_name, "error")
+            else:
+                flash('Part \"%s\" was succesfully added to database' % identifier, "success")    
+                identifiers_to_add.append(identifier)               
+                part = Part(sheet.cell(row=index, column=form.part_name.data).value,
+                            sheet.cell(row=index, column=form.manufacturer.data).value,
+                            sheet.cell(row=index, column=form.order_code.data).value,
+                            package_id)
+                obj_to_add_to_db.append(part)
+    return obj_to_add_to_db
+    
+def import_packages(filepath, form):
+    book = load_workbook(filename=filepath, read_only=True)
+    sheet = book.active    
+    obj_to_add_to_db = create_packagelist_from_package_sheet(form=form, sheet=sheet, max_row=1000)
+    addToDatabase(obj_to_add_to_db)
+    obj_to_add_to_db = create_alt_name_objects_from_package_sheet(form=form, sheet=sheet, max_row=1000)
+    addToDatabase(obj_to_add_to_db)
+
+def create_packagelist_from_package_sheet(form, sheet, max_row):
+    obj_to_add_to_db = []
+    identifiers_to_add = []
+    sheet_dim = calc_and_limit_sheet_dim(sheet, 0, max_row)
+    row_count = sheet_dim[1]
+    
+    for index in range(2, max_row):
+        # first lets make sure this object does not exist in database
+        identifier = sheet.cell(row=index, column=form.name.data).value
+        if identifier == None:
+            pass
+        elif package_in_db_get_id_or_none(name=identifier) != None:
+            flash('\"%s\" exists already' % identifier, "error")
+        elif duplicate_in_file(searchfor=identifier, inlist=identifiers_to_add):
+            flash('Identifier \"%s\" was found twice in import file, second instance ignored' % identifier, "warning")
+        else:
+            flash('\"%s\" added to database' % identifier, "success")    
+            identifiers_to_add.append(identifier) 
+            obj = Package(sheet.cell(row=index, column=form.name.data).value,
+                        sheet.cell(row=index, column=form.pin_count.data).value,
+                        sheet.cell(row=index, column=form.pitch.data).value,
+                        sheet.cell(row=index, column=form.width.data).value,
+                        sheet.cell(row=index, column=form.length.data).value,
+                        sheet.cell(row=index, column=form.height.data).value
+                        )
+            obj_to_add_to_db.append(obj)
+    return obj_to_add_to_db
+
+def create_alt_name_objects_from_package_sheet(form, sheet, max_row):
+    obj_to_add_to_db = []
+    identifiers_to_add = []
+    
+    for index in range(2, max_row):
+        identifier_str = sheet.cell(row=index, column=form.alt_package.data).value
+        if identifier_str != None:
+            identifier_str = identifier_str.replace(" ","")
+            identifier_list = identifier_str.split(",")
+            for identifier in identifier_list:
+                if AltPackage.query.filter_by(name=identifier).first() != None:
+                    flash('\"%s\" exists already' % identifier, "error")
+                elif duplicate_in_file(searchfor=identifier, inlist=identifiers_to_add):
+                    flash('Identifier \"%s\" was found twice in import file, second instance ignored' % identifier, "warning")
+                else:
+                    flash('\"%s\" added to database' % identifier, "success")  
+                    parent_package_name = sheet.cell(row=index, column=form.name.data).value
+                    parent_id = Package.query.filter_by(name=parent_package_name).first().id
+                    obj = AltPackage (
+                        identifier,
+                        parent_id
+                    )
+                    obj_to_add_to_db.append(obj)
+    return obj_to_add_to_db
+
+def calc_and_limit_sheet_dim(sheet, max_col, max_row):
+    dim = sheet.calculate_dimension()
+    dim = dim.split(':')
+    xy = coordinate_from_string(dim[1])
+    count_col = column_index_from_string(xy[0])
+    count_row = xy[1]
+    if max_col and (count_col > max_col):
+        count_col = max_col
+    if max_row and (count_row > max_row):
+        count_row = max_row
+    return (count_col, count_row)
+
+
+def package_in_db_get_id_or_none(name):
+    # check primary package database:
+    package = Package.query.filter_by(name=name).first()
+    if package != None:
+        return package.id
+    # check alternative names database:
+    package = Package.query.filter_by(name=name).first()
+    if package != None:
+        return package.parent_package_id
+    # nothin found, non existant:
+    return None
+    
+
+def addToDatabase(obj_to_db):
+    # add all items on the list to qeue and commit
+    for item in obj_to_db:
+        db.session.add(item)
+    db.session.commit()
+
+def part_in_db(ordering_code):
+    # find the part in the database
+    result_db = Part.query.filter_by(orderingCode = ordering_code).first()
+    return (result_db != None)
+
+def duplicate_in_file(searchfor, inlist):
+    # find the part in the current import list
+    for item in inlist:
+        if item == searchfor:
+            return True
+    return False

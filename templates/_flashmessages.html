@@ -1,7 +1,7 @@
 {% with errors = get_flashed_messages(category_filter=["error"]) %}
 {% if errors %}
 <div id="errors">
-    {% for message in error %}
+    {% for message in errors %}
     <div class="alert alert-danger fade in">
         <a href="#" class="close" data-dismiss="alert">&times;</a>
         <strong>Error!</strong> {{message}}

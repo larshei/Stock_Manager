@@ -10,6 +10,7 @@ def part_add():
     if form.validate_on_submit():
         
         part = Part(
+            form.name.data,
             form.manufacturer.data,
             form.orderingCode.data,
             form.packageSelect.data.id

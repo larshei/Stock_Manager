@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{%block title %}Map file columns{% endblock %}
+
+{% from "_formhelpers.html" import render_field %}
+
+{% block content %}
+
+<div class="col-md-offset-3 col-md-6">
+        <h2>Map Excel Table Columns to Database Columns</h2>
+        {% if content_type == 'part' %}
+            <form method="POST" action="{{url_for('file_process', content_type=content_type, filename=filename)}}" role="form">
+                {{form.hidden_tag()}}
+                {{render_field(form.manufacturer, class="form-control")}}
+                {{render_field(form.order_code, class="form-control")}}
+                {{render_field(form.part_name, class="form-control")}}
+                {{render_field(form.package, class="form-control")}}
+                <button type="submit" class="btn btn-primary">import</button>
+            </form>
+            Uploading a Part file
+        {% elif content_type == 'package' %}
+            <form method="POST" action="{{url_for('file_process', content_type=content_type, filename=filename)}}" role="form">
+                {{form.hidden_tag()}}
+                {{render_field(form.name, class="form-control")}}
+                {{render_field(form.pin_count, class="form-control")}}
+                {{render_field(form.pitch, class="form-control")}}
+                {{render_field(form.width, class="form-control")}}
+                {{render_field(form.length, class="form-control")}}
+                {{render_field(form.height, class="form-control")}}
+                {{render_field(form.alt_package, class="form-control")}}
+                <button type="submit" class="btn btn-primary">import</button>
+            </form>
+        {% elif content_type == 'assembly' %}
+            <div class="error">Assembly import has not been implemented yet</div>
+        {% else %}
+            <div class="error">Please specify what you tried to import (part, package, assembly, ...). Your choice was {{content_type}}</div>
+        {% endif %}
+    </form>
+</div>
+
+{% endblock %}

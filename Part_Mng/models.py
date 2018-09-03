@@ -2,11 +2,13 @@ from Stock_Manager import db
 
 class Part(db.Model):
     id              = db.Column(db.Integer, primary_key=True)
+    name           = db.Column(db.String(40))
     manufacturer    = db.Column(db.String(40))
-    orderingCode    = db.Column(db.String(40))
+    orderingCode    = db.Column(db.String(40), unique=True)
     case_id         = db.Column(db.Integer, db.ForeignKey('package.id'))
 
-    def __init__(self, manufacturer, orderingCode, case_id):
+    def __init__(self, name, manufacturer, orderingCode, case_id):
+        self.name           = name
         self.manufacturer   = manufacturer
         self.orderingCode   = orderingCode
         self.case_id        = case_id
