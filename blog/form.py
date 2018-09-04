@@ -28,9 +28,6 @@ def categories():
     return Category.query
 
 class PostForm(Form):
-    image = FileField('Image', validators=[
-        FileAllowed(['jpg', 'png'], 'Images only!')
-    ])
     title = StringField('Title', [
             validators.Required(),
             validators.Length(max=80)

@@ -13,6 +13,7 @@ class MapTableColumnsForPartForm(Form):
     order_code  = SelectField('Manufacturer Ordering Code',[validators.Required()], coerce=int)
     part_name   = SelectField('Part Name',[validators.Required()], coerce=int)
     package     = SelectField('Package',[validators.Required()], coerce=int)
+    description = SelectField('Description',[validators.Optional()], coerce=int)
 
 class MapTableColumnsForPackageForm(Form):
     # force int as the type, so we can use the index of the element as a valid selection for "value"

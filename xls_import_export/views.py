@@ -9,6 +9,8 @@ from package_mng.models import Package, AltPackage
 from xls_import_export.form import FileUploadForm, MapTableColumnsForPartForm, MapTableColumnsForPackageForm
 from flask import render_template, redirect, request, url_for, flash, send_from_directory
 
+SELECTFIELD_NONE_SELECTED = 100
+
 # #############################################################################
 #
 #                       D O W N L O A D    D A T A 
@@ -129,24 +131,26 @@ def file_upload():
 def file_process(content_type, filename):
     filepath = 'uploads/'+content_type+'/'+filename
     choices = getTableHeaders(filepath)
+    choices_allow_None = [(SELECTFIELD_NONE_SELECTED,"---")]+choices
 
     if content_type == 'part':
         form = MapTableColumnsForPartForm()
-        form.manufacturer.choices = choices
+        form.manufacturer.choices = choices_allow_None
         form.order_code.choices = choices
-        form.part_name.choices = choices
+        form.part_name.choices = choices_allow_None
         form.package.choices = choices
+        form.description.choices = choices_allow_None
         if form.validate_on_submit():
             import_parts(filepath=filepath, form=form)
     elif content_type == 'package':
         form = MapTableColumnsForPackageForm()
         form.name.choices = choices
-        form.pin_count.choices = choices
-        form.pitch.choices = choices
-        form.width.choices = choices
-        form.length.choices = choices
-        form.height.choices = choices
-        form.alt_package.choices = choices
+        form.pin_count.choices = choices_allow_None
+        form.pitch.choices = choices_allow_None
+        form.width.choices = choices_allow_None
+        form.length.choices = choices_allow_None
+        form.height.choices = choices_allow_None
+        form.alt_package.choices = choices_allow_None
         if form.validate_on_submit():
             import_packages(filepath=filepath, form=form)
     elif content_type == 'assembly':
@@ -184,14 +188,33 @@ def create_partlist_from_part_sheet(form, sheet, max_row):
                 flash('no case \"%s\" found' % package_name, "error")
             else:
                 flash('Part \"%s\" was succesfully added to database' % identifier, "success")    
-                identifiers_to_add.append(identifier)               
-                part = Part(sheet.cell(row=index, column=form.part_name.data).value,
-                            sheet.cell(row=index, column=form.manufacturer.data).value,
-                            sheet.cell(row=index, column=form.order_code.data).value,
-                            package_id)
+                identifiers_to_add.append(identifier)   
+                part = Part( secure_check_cell_string(sheet=sheet, row=index, column=form.part_name.data),
+                             secure_check_cell_string(sheet=sheet, row=index, column=form.manufacturer.data),
+                             secure_check_cell_string(sheet=sheet, row=index, column=form.order_code.data),
+                             package_id,
+                             secure_check_cell_string(sheet=sheet, row=index, column=form.description.data),
+                            )
                 obj_to_add_to_db.append(part)
     return obj_to_add_to_db
-    
+
+def secure_check_cell_string(sheet, column, row):
+    if (column <= 0) or (row <= 0) or (column == SELECTFIELD_NONE_SELECTED):
+        return "n/a"
+    val = sheet.cell(row=row, column=column).value
+    if val == None:
+        val = "n/a"
+    return val
+
+def secure_check_cell_number(sheet, column, row):
+    if (column <= 0) or (row <= 0) or (column == SELECTFIELD_NONE_SELECTED):
+        return 0
+    val = sheet.cell(row=row, column=column).value
+    if val == None:
+        val = 0
+    return val
+
+
 def import_packages(filepath, form):
     book = load_workbook(filename=filepath, read_only=True)
     sheet = book.active    
@@ -218,12 +241,12 @@ def create_packagelist_from_package_sheet(form, sheet, max_row):
         else:
             flash('\"%s\" added to database' % identifier, "success")    
             identifiers_to_add.append(identifier) 
-            obj = Package(sheet.cell(row=index, column=form.name.data).value,
-                        sheet.cell(row=index, column=form.pin_count.data).value,
-                        sheet.cell(row=index, column=form.pitch.data).value,
-                        sheet.cell(row=index, column=form.width.data).value,
-                        sheet.cell(row=index, column=form.length.data).value,
-                        sheet.cell(row=index, column=form.height.data).value
+            obj = Package(  sheet.cell(row=index, column=form.name.data).value,
+                            secure_check_cell_number(sheet=sheet, row=index, column=form.pin_count.data),
+                            secure_check_cell_number(sheet=sheet, row=index, column=form.pitch.data),
+                            secure_check_cell_number(sheet=sheet, row=index, column=form.width.data),
+                            secure_check_cell_number(sheet=sheet, row=index, column=form.length.data),
+                            secure_check_cell_number(sheet=sheet, row=index, column=form.height.data)
                         )
             obj_to_add_to_db.append(obj)
     return obj_to_add_to_db

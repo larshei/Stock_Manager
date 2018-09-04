@@ -58,9 +58,6 @@ def setup():
 def post():
     form = PostForm()
     if form.validate_on_submit():
-        image = request.files.get('image')
-        filename = None
-        filename = uploaded_images.save(image)
 
         if form.new_category.data:
             new_category = Category(form.new_category.data)
@@ -70,10 +67,11 @@ def post():
         else:
             category = form.category.data
         blog = Blog.query.first()
-        author = Author.query.filter_by(username=session['username']).first()
+        author = Author("lars", "lhe", "lars", "pw", 1)
         title = form.title.data
         body = form.body.data
         slug = slugify(title)
+        filename=""
         post = Post(blog, author, title, body, category, filename, slug)
         db.session.add(post)
         db.session.commit()

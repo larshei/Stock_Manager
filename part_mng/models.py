@@ -6,8 +6,9 @@ class Part(db.Model):
     manufacturer    = db.Column(db.String(40))
     orderingCode    = db.Column(db.String(40), unique=True)
     case_id         = db.Column(db.Integer, db.ForeignKey('package.id'))
+    description     = db.Column(db.String(100))
 
-    def __init__(self, name, manufacturer, orderingCode, case_id):
+    def __init__(self, name, manufacturer, orderingCode, case_id, description=""):
         self.name           = name
         self.manufacturer   = manufacturer
         self.orderingCode   = orderingCode
@@ -16,6 +17,11 @@ class Part(db.Model):
     def __repr__(self):
         return '<Part: %r %r>' % (self.manufacturer, self.orderingCode) 
 
+
+class PartCategory(db.Model):
+    id                  = db.Column(db.Integer, primary_key=True)
+    name                = db.Column(db.String(40), unique=True)
+    parent_category_id  = db.Column(db.Integer)
 
 # class DistributorOfPart(db.Model):
 #     id              = db.Column(db.Integer, primary_key=True)
