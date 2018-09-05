@@ -21,7 +21,7 @@
             {{ render_field(form.name, class='form-control') }}
         </div>
         <div class="col-md-6">
-            {{ render_field(form.packageSelect, class='form-control') }}
+            {{ render_field(form.package_select, class='form-control') }}
         </div>
     </div>
     <div class="row">
@@ -30,7 +30,21 @@
         </div>
     
         <div class="col-md-6">
-            {{ render_field(form.orderingCode, class='form-control') }}
+            {{ render_field(form.ordering_code, class='form-control') }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            {{ render_field(form.category_select, class='form-control') }}
+        </div>
+    
+        <div class="col-md-6">
+            {{ render_field(form.category_add, class='form-control') }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {{ render_field(form.description, class='form-control') }}
         </div>
     </div>
 

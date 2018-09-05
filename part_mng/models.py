@@ -2,26 +2,23 @@ from Stock_Manager import db
 
 class Part(db.Model):
     id              = db.Column(db.Integer, primary_key=True)
-    name           = db.Column(db.String(40))
+    name            = db.Column(db.String(40))
     manufacturer    = db.Column(db.String(40))
     orderingCode    = db.Column(db.String(40), unique=True)
     case_id         = db.Column(db.Integer, db.ForeignKey('package.id'))
     description     = db.Column(db.String(100))
+    category   = db.Column(db.Integer, db.ForeignKey('part_category.id'))
 
-    def __init__(self, name, manufacturer, orderingCode, case_id, description=""):
+    def __init__(self, name, manufacturer, orderingCode, case_id, description="", category=None):
         self.name           = name
         self.manufacturer   = manufacturer
         self.orderingCode   = orderingCode
         self.case_id        = case_id
+        self.description    = description
+        self.category       = category
 
     def __repr__(self):
         return '<Part: %r %r>' % (self.manufacturer, self.orderingCode) 
-
-
-class PartCategory(db.Model):
-    id                  = db.Column(db.Integer, primary_key=True)
-    name                = db.Column(db.String(40), unique=True)
-    parent_category_id  = db.Column(db.Integer)
 
 # class DistributorOfPart(db.Model):
 #     id              = db.Column(db.Integer, primary_key=True)

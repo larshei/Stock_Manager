@@ -19,8 +19,9 @@ uploaded_images = UploadSet('images', IMAGES)
 uploaded_tables = UploadSet('tables', extensions=('xls','xlsx'))
 configure_uploads(app, (uploaded_images, uploaded_tables))
 
-from blog import views
 from author import views
 from part_mng import views
+from categories import views
 from package_mng import views
+from lms_application import views
 from xls_import_export import views
