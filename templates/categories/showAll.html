@@ -23,9 +23,9 @@
             </tr>
             {% for category in categories %}
             <tr>
-            <td>{{category.name}}</td>
+            <td><a href="{{url_for('category_show', id=category.id)}}">{{category.name}}</a></td>
             <td>{% for item in category.parts %}
-                {{item.name}}<br>
+                <a href="{{url_for('part_show', id=item.id)}}">{{item.name}}</a><br>
                 {% endfor %}
             </td>
             </tr>

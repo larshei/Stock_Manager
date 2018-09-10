@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if action=="edit" %}Edit {{category.name}}
+{% else %} Add Category
+{% endif %}
+{% endblock %}
+
+{% from "_formhelpers.html" import render_field %}
+
+{% block content %}
+
+<div class="col-md-offset-3 col-md-6">
+    {% if action=="edit" %}
+        <h2>Edit '{{category.name}}'</h2>
+        <form method="POST" action="{{ url_for('category_edit', id=category.id)}}" role="form">
+    {%else%}
+        <h2>Add Category</h2>
+        <form method="POST" action="{{ url_for('category_add')}}" role="form">
+    {%endif%}
+  
+        {{ form.hidden_tag() }}
+        {{ render_field(form.name,          class='form-control') }}
+        {{ render_field(form.description,   class='form-control') }}
+        {% if action=="edit" %}<button type="submit" class="btn btn-primary">Edit</button>
+        {% else %}<button type="submit" class="btn btn-primary">Add Category</button>
+        {% endif %}   
+    </form>
+</div>
+{% endblock %}

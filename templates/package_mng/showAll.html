@@ -25,7 +25,7 @@
             </tr>
             {% for package in packages %}
             <tr>
-            <td><a href="{{ url_for('package_showById', id=package.id)}}">{{package.name}}</a></td>
+            <td><a href="{{ url_for('package_show', id=package.id)}}">{{package.name}}</a></td>
             <td>{{package.pin_count}}</td>
             <td>{% for item in package.alt_names %}
                 {{item.name}}<br>

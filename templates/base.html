@@ -16,27 +16,17 @@
     <div class="container">
 
       <div class="row">
-          <!-- <nav class="navbar navbar-inverse">
-            <div class="container-fluid">
-              <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="navbar-header">
-                  <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">LMS</a>
-              </div>
-            </div>
-          </nav> -->
+        <div class="col-md-12">
           <div id="navbar-header">
               <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('index')}}">Home</a></li>
                 <li><a href="{{ url_for('package_showAll')}}">Show All Packages</a></li>
-                <!-- <li><a href="{{ url_for('package_add')}}">Add Package</a></li> -->
                 <li><a href="{{ url_for('part_showAll')}}">Show All Parts</a></li>
-                <!-- <li><a href="{{ url_for('part_add')}}">Add Part</a></li> -->
                 <li><a href="{{ url_for('category_showAll')}}">Categories</a></li>
                 <li><a href="{{ url_for('file_upload')}}">Import from XLS(X)</a></li>
               </ul>
             </div>
+          </div>
       </div>
 
       {% include '_flashmessages.html' %}

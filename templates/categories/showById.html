@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}{{category.name}}{% endblock %}
+
+{% from "_formhelpers.html" import render_field %}
+
+{% block content %}
+
+        <div class="row">
+            <div class="col-md-offset-2 col-md-10">
+                <h2>{{category.name}}</h2> 
+                {{category.description}}<br>
+                <a href="{{url_for('category_edit',id=category.id)}}">Edit</a><br>
+                <hr>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                    <tr>
+                        <th>Manufacturer</th>
+                        <th>Part Name</th>
+                        <th>Package</th>
+                    </tr>
+                    {% for item in category.parts %}
+                    <tr>
+                    <td>{{item.manufacturer}}</td>
+                    <td><a href="{{url_for('part_show', id=item.id)}}">{{item.name}}</a></td>
+                    <td><a href="{{url_for('package_show', id=item.package.id)}}">{{item.package.name}}</a></td>
+                    </tr>
+                    {% endfor %}
+        
+                    </table>
+                </div>    
+            </div>
+        </div>
+
+
+
+{% endblock %}

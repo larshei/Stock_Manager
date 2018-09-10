@@ -15,9 +15,8 @@ migrate = Migrate(app, db)
 md = Markdown(app, extensions=['fenced_code', 'tables'])
 
 # images
-uploaded_images = UploadSet('images', IMAGES)
-uploaded_tables = UploadSet('tables', extensions=('xls','xlsx'))
-configure_uploads(app, (uploaded_images, uploaded_tables))
+uploaded_tables = UploadSet('tables', extensions=('xlsx'))
+configure_uploads(app, (uploaded_tables))
 
 from author import views
 from part_mng import views

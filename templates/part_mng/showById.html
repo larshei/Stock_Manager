@@ -1,15 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}Part {{part.orderingCode}}{% endblock %}
+{% block title %}Part {{part.ordering_code}}{% endblock %}
 
 {% block content %}
 
-<div>
-Info on Part ID {{part.id}}<br>
+<div class="col-md-offset-1 col-md-10">
+<h2>{{part.ordering_code}}</h2>
+<a href="{{url_for('part_edit', id=part.id)}}">EDIT</a>
 
 Manufacturer:   {{part.manufacturer}}<br>
-Ordering Code:  {{part.orderingCode}}<br>
-Package:  <a href="{{url_for('package_showById', id=part.package.id)}}">{{part.package.name}}</a><br>
+Ordering Code:  {{part.ordering_code}}<br>
+Package:  <a href="{{url_for('package_show', id=part.package.id)}}">{{part.package.name}}</a><br>
+
+<h3>Used in:</h3>
 </div>
 
 {% endblock %}

@@ -1,43 +1,64 @@
 {% extends "base.html" %}
 
-{% block title %}Add Case{% endblock %}
+{% block title %}
+{% if action=="edit" %}Edit {{package.name}}
+{% else %} Add Package
+{% endif %}
+{% endblock %}
 
 {% block content %}
 
 {% from "_formhelpers.html" import render_field %}
      
 <div class="col-md-offset-3 col-md-6">
-<form method="POST" action="{{ url_for('package_add')}}" role="form">
-        <h4>Add New Case</h4>
-{{ form.hidden_tag() }}
-<div class="row">
-    <div class="col-md-6">
-        {{ render_field(form.name, class='form-control') }}
-    </div>
-    <div class="col-md-3">
-            {{ render_field(form.pin_count, class='form-control') }}
-    </div>
-    <div class="col-md-3">
-        {{ render_field(form.pitch, class='form-control') }}
-    </div>
-</div>
+    {% if action=="edit" %}
+        <h2>Edit '{{package.name}}'</h2>
+        <form method="POST" action="{{url_for('package_edit',id=package.id)}}" role="form">
+    {% else %}
+        <h2>Add New Package</h2>
+        <form method="POST" action="{{url_for('package_add')}}" role="form">
+    {% endif %}
 
-<div class="row">
-    <div class="col-md-3">
-        {{ render_field(form.length, class='form-control') }}
-    </div>
-
-    <div class="col-md-3">
-        {{ render_field(form.width, class='form-control') }}
+    {{ form.hidden_tag() }}
+    <div class="row">
+        <div class="col-md-6">
+            {{ render_field(form.name, class='form-control') }}
+        </div>
+        <div class="col-md-3">
+                {{ render_field(form.pin_count, class='form-control') }}
+        </div>
+        <div class="col-md-3">
+            {{ render_field(form.pitch, class='form-control') }}
+        </div>
     </div>
 
-    <div class="col-md-3">
-        {{ render_field(form.height, class='form-control') }}
-    </div>
-</div>
+    <div class="row">
+        <div class="col-md-4">
+            {{ render_field(form.length, class='form-control') }}
+        </div>
 
-<!-- TODO place the button for correct formatiing -->
-<button type="submit" class="btn btn-default">Add Case</button>
+        <div class="col-md-4">
+            {{ render_field(form.width, class='form-control') }}
+        </div>
+
+        <div class="col-md-4">
+            {{ render_field(form.height, class='form-control') }}
+        </div>
+        {% if action!="edit" %}
+        <div class="col-md-12">
+            {{ render_field(form.alt_names, class='form-control') }}
+        </div>
+        {% endif %}
+        </div>
+
+
+
+    <!-- TODO place the button for correct formatiing -->
+    {% if action=="edit"%}
+    <button type="submit" class="btn btn-primary">Save Edit</button>
+    {% else %}
+    <button type="submit" class="btn btn-primary">Add Package</button>
+    {% endif %}
 
 </form>
 </div>

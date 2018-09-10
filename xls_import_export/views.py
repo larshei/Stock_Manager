@@ -5,8 +5,11 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.utils import column_index_from_string, coordinate_from_string
 from datetime import datetime
 from part_mng.models import Part
+from part_mng.helpers import find_part_in_db
 from package_mng.models import Package, AltPackage
+from package_mng.helpers import package_in_db_get_id_or_none
 from xls_import_export.form import FileUploadForm, MapTableColumnsForPartForm, MapTableColumnsForPackageForm
+from xls_import_export.helpers import already_in_list
 from flask import render_template, redirect, request, url_for, flash, send_from_directory
 
 SELECTFIELD_NONE_SELECTED = 100
@@ -58,7 +61,7 @@ def part_downloadXls():
     for part in Part.query.all():
         row = ( part.name,
                 part.manufacturer,
-                part.orderingCode,
+                part.ordering_code,
                 part.package.name
               )
         sheet.append(row)
@@ -176,9 +179,9 @@ def create_partlist_from_part_sheet(form, sheet, max_row):
         identifier = sheet.cell(row=index, column=form.order_code.data).value
         if identifier == None:
             pass
-        elif part_in_db(ordering_code=identifier):
+        elif find_part_in_db(ordering_code=identifier):
             flash('Duplicate identifier \"%s\" was already found in database, ignored' % identifier, "warning")
-        elif duplicate_in_file(searchfor=identifier, inlist=identifiers_to_add):
+        elif already_in_list(searchfor=identifier, inlist=identifiers_to_add):
             flash('Identifier \"%s\" was found twice in import file, second instance ignored' % identifier, "warning")
         else:
             #if the part does not exist, make sure we have the package!
@@ -236,7 +239,7 @@ def create_packagelist_from_package_sheet(form, sheet, max_row):
             pass
         elif package_in_db_get_id_or_none(name=identifier) != None:
             flash('\"%s\" exists already' % identifier, "error")
-        elif duplicate_in_file(searchfor=identifier, inlist=identifiers_to_add):
+        elif already_in_list(searchfor=identifier, inlist=identifiers_to_add):
             flash('Identifier \"%s\" was found twice in import file, second instance ignored' % identifier, "warning")
         else:
             flash('\"%s\" added to database' % identifier, "success")    
@@ -263,7 +266,7 @@ def create_alt_name_objects_from_package_sheet(form, sheet, max_row):
             for identifier in identifier_list:
                 if AltPackage.query.filter_by(name=identifier).first() != None:
                     flash('\"%s\" exists already' % identifier, "error")
-                elif duplicate_in_file(searchfor=identifier, inlist=identifiers_to_add):
+                elif already_in_list(searchfor=identifier, inlist=identifiers_to_add):
                     flash('Identifier \"%s\" was found twice in import file, second instance ignored' % identifier, "warning")
                 else:
                     flash('\"%s\" added to database' % identifier, "success")  
@@ -286,36 +289,10 @@ def calc_and_limit_sheet_dim(sheet, max_col, max_row):
         count_col = max_col
     if max_row and (count_row > max_row):
         count_row = max_row
-    return (count_col, count_row)
-
-
-def package_in_db_get_id_or_none(name):
-    # check primary package database:
-    package = Package.query.filter_by(name=name).first()
-    if package != None:
-        return package.id
-    # check alternative names database:
-    package = Package.query.filter_by(name=name).first()
-    if package != None:
-        return package.parent_package_id
-    # nothin found, non existant:
-    return None
-    
+    return (count_col, count_row)    
 
 def addToDatabase(obj_to_db):
     # add all items on the list to qeue and commit
     for item in obj_to_db:
         db.session.add(item)
     db.session.commit()
-
-def part_in_db(ordering_code):
-    # find the part in the database
-    result_db = Part.query.filter_by(orderingCode = ordering_code).first()
-    return (result_db != None)
-
-def duplicate_in_file(searchfor, inlist):
-    # find the part in the current import list
-    for item in inlist:
-        if item == searchfor:
-            return True
-    return False
