@@ -8,13 +8,16 @@
 
 {% block content %}
 <div class="col-md-12 item-list">
+    <h1>Package Overview</h1>
+    <div class="navbar">
+        <ul class="navbar-nav list-inline ">
+            <li><a href="{{url_for('package_downloadXls')}}">Download</a></li>
+            <li><a href="{{url_for('file_upload')}}">Upload</a></li>
+            <li><a href="{{url_for('package_add')}}">Add Package</a></li>
+        </ul>   
+        <hr>  
     <div class="row">
         <div class="col-md-12">
-            <div class="row">  
-                <form target="_blank" method="POST" action="{{url_for('package_downloadXls')}}">
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-download"></i> Download XLS</button>
-                </form>               
-            </div>
             <div class="table-responsive">
             <table class="table table-sm table-hover">
             <tr>

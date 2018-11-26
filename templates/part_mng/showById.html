@@ -5,14 +5,24 @@
 {% block content %}
 
 <div class="col-md-offset-1 col-md-10">
-<h2>{{part.ordering_code}}</h2>
-<a href="{{url_for('part_edit', id=part.id)}}">EDIT</a>
+    <h2>{{part.ordering_code}}</h2>
+    <a href="{{url_for('part_edit', id=part.id)}}">EDIT</a>
 
-Manufacturer:   {{part.manufacturer}}<br>
-Ordering Code:  {{part.ordering_code}}<br>
-Package:  <a href="{{url_for('package_show', id=part.package.id)}}">{{part.package.name}}</a><br>
+    Manufacturer:   {{part.manufacturer}}<br>
+    Ordering Code:  {{part.ordering_code}}<br>
+    Package:  <a href="{{url_for('package_show', id=part.package.id)}}">{{part.package.name}}</a><br>
 
-<h3>Used in:</h3>
+    <h3>Used in:</h3>
+    <div class="table-responsive">
+        <table class="table table-sm table-hover">
+            {% for item in part.assemblies %}
+            <tr>
+            <td><a class="block" href="{{url_for('part_show', id=item.id)}}">{{item.ordering_code}}</a></td>
+            </tr>
+            {% endfor %}
+
+        </table>
+    </div>
 </div>
 
 {% endblock %}

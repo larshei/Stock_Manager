@@ -7,17 +7,11 @@ from categories.models import PartCategory
 #                U T I L I T Y
 # ===========================================
 
-def get_or_create_category_id(form):
-    category_id = None
-    category_name = form.category_add.data
-    if category_name == "":
-        category = PartCategory.query.filter_by(id=form.category_select.data.id).first()
-        if category is None:
-            return None
-        else:
-            return category.id
-    else:
-        category = PartCategory(category_name, 0)
-        db.session.add(category)
-        db.session.commit()
+def create_or_get_category_id(category_name, parent_category_id = 0):
+        category = PartCategory.query.filter_by(name=category_name).first()
+        if category is None: 
+            category = PartCategory(category_name, parent_category_id)
+            db.session.add(category)
+            db.session.commit()
         return category.id
+

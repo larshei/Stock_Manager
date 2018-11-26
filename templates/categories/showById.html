@@ -16,6 +16,20 @@
                 <div class="table-responsive">
                     <table class="table table-sm table-hover">
                     <tr>
+                        <th>Subcategories</th>
+                    </tr>
+                    {% for category in subcategories %}
+                    <tr>
+                        <td><a href="{{url_for('category_show',id=category.id)}}">{{category.name}}</a></td>
+                    </tr>
+                    {% endfor %}
+        
+                    </table>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                    <tr>
                         <th>Manufacturer</th>
                         <th>Part Name</th>
                         <th>Package</th>

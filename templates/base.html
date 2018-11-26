@@ -15,24 +15,25 @@
 
     <div class="container">
 
-      <div class="row">
-        <div class="col-md-12">
+        <div class="row col-md-12">
           <div id="navbar-header">
               <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('index')}}">Home</a></li>
                 <li><a href="{{ url_for('package_showAll')}}">Show All Packages</a></li>
                 <li><a href="{{ url_for('part_showAll')}}">Show All Parts</a></li>
                 <li><a href="{{ url_for('category_showAll')}}">Categories</a></li>
+                <li><a href="{{ url_for('assembly_showAll')}}">Assemblies</a></li>
                 <li><a href="{{ url_for('file_upload')}}">Import from XLS(X)</a></li>
               </ul>
             </div>
           </div>
-      </div>
 
       {% include '_flashmessages.html' %}
 
+    <div class="col-md-12">
     {% block content %}{% endblock %}
-    
+   </div>
+
       <div class="col-md-offset-3 col-md-6">
         <hr />
         <footer>

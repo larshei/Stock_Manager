@@ -20,9 +20,10 @@
     {%endif%}
   
         {{ form.hidden_tag() }}
-        {{ render_field(form.name,          class='form-control') }}
-        {{ render_field(form.description,   class='form-control') }}
-        {% if action=="edit" %}<button type="submit" class="btn btn-primary">Edit</button>
+        {{ render_field(form.name,              class='form-control') }}
+        {{ render_field(form.description,       class='form-control') }}
+        {{ render_field(form.parent_category,   class='form-control') }}
+    {% if action=="edit" %}<button type="submit" class="btn btn-primary">Edit</button>
         {% else %}<button type="submit" class="btn btn-primary">Add Category</button>
         {% endif %}   
     </form>

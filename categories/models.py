@@ -2,11 +2,9 @@ from Stock_Manager import db
 
 class PartCategory(db.Model):
     id                  = db.Column(db.Integer, primary_key=True)
-    name                = db.Column(db.String(40), unique=True)
-    description         = db.Column(db.String(100))
-    parent_category_id  = db.Column(db.Integer)
-
-    parts               = db.relationship('Part', backref='partcategory', lazy='dynamic')
+    name                = db.Column(db.String(30), unique=True)
+    description         = db.Column(db.String(200))
+    parent_category_id  = db.Column(db.Integer, db.ForeignKey('part_category.id'))
 
     def __init__(self, name, description="", parent_category_id=0):
         self.name               = name

@@ -1,9 +1,9 @@
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import validators, StringField, DecimalField,  PasswordField, IntegerField, RadioField
 from package_mng.models import Package, AltPackage
 
 
-class PackageAddForm(Form):
+class PackageAddForm(FlaskForm):
     name = StringField('Case Name*', [validators.Required(), 
                                      validators.length(max=20)])
     pin_count       = IntegerField( 'Pin Count')
@@ -16,6 +16,6 @@ class PackageAddForm(Form):
 def get_packages():
     return Package.query
 
-class PackageAddAlternativeNameForm(Form):
+class PackageAddAlternativeNameForm(FlaskForm):
     name = StringField('Case Name', [validators.Required(), 
                                      validators.length(max=20)])

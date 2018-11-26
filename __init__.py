@@ -22,5 +22,6 @@ from author import views
 from part_mng import views
 from categories import views
 from package_mng import views
+from assembly_mng import views
 from lms_application import views
 from xls_import_export import views

@@ -52,7 +52,7 @@ def create_download_file_finish(book, prefix):
     book.save("generated/%s.xlsx" % sheet.title)
     return sheet.title+'.xlsx'
 
-@app.route('/download/part', methods=['POST'])
+@app.route('/download/part')
 def part_downloadXls():
     book = Workbook()
     sheet = book.active # currently active worksheet (default 0)
@@ -70,7 +70,7 @@ def part_downloadXls():
     return send_from_directory(directory=app.config['GENERATED_DOWNLOADS_FOLDER'],
                                filename=filename, as_attachment=True)
 
-@app.route('/download/package', methods=['POST'])
+@app.route('/download/package')
 def package_downloadXls():
     book = Workbook()
     sheet = book.active # currently active worksheet (default 0)
@@ -102,7 +102,6 @@ def package_downloadXls():
 # #############################################################################
 
 def getTableHeaders(filepath):
-    print filepath
     wb = load_workbook(filename=filepath, read_only=True)
     sheet = wb.active
     col_headings = []

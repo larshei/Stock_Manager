@@ -9,7 +9,7 @@ from flask import render_template, redirect, session, request, url_for, flash
 #  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @app.route('/category')
 def category_showAll():
-    categories = PartCategory.query.order_by(PartCategory.name.asc())   # get all database antries from the PartCategory table
+    categories = PartCategory.query.filter(PartCategory.parent_category_id==None).order_by(PartCategory.name.asc())   # get all database antries from the PartCategory table
     category_count = PartCategory.query.count()                         # get the count as well (this is slow and may need to be removed later on)
     return render_template('categories/showAll.html', categories=categories,count=category_count) # render template
 
@@ -24,9 +24,16 @@ def category_showAll():
 def category_add():
     form = CategoryForm()                                           # set the category form
     if form.validate_on_submit():                                   # check if this is post and if the form has been filled out
+        if form.parent_category.data is None:
+            parent = None
+        else:
+            parent = form.parent_category.data.id
+            print "\nadded category",parent, "to part\n"
+
         category = PartCategory(                                    # .. create a new PartCategory object based on form data 
             form.name.data,
-            form.description.data
+            form.description.data,
+            parent
         )
         db.session.add(category)                                    # add the object to SQLALchemys session
         db.session.commit()                                         # update the chagnes (will recognize a newobject and INSERT)
@@ -39,7 +46,11 @@ def category_add():
 @app.route('/category/<int:id>')
 def category_show(id):
     category = PartCategory.query.filter_by(id=id).first_or_404()   # get the first object or trhow 404 if not found
-    return render_template("categories/showById.html", category=category) # render template to show category data
+    subcategories = PartCategory.query.filter_by(parent_category_id=id).order_by(PartCategory.name.asc())
+    print subcategories
+    print ""
+    print ""
+    return render_template("categories/showById.html", category=category, subcategories=subcategories) # render template to show category data
 
 #  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #   edit Category with a given ID. Throw 404 if not found. Uses the same template as the add function and passes an 

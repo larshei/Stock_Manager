@@ -7,43 +7,50 @@
 {% block content %}
 
 <div class="row">
-    <div class="col-md-offset-3 col-md-6">
+    <div class="col-md-offset-1 col-md-10">
         <div class="row">
-            <div class="col-md-4"><h3>{{package.name}}</h3>
-            <a href="{{url_for('package_edit', id=package.id)}}">Edit</a></div>
+            <div class="col-md-12"><h3>{{package.name}}</h3>
+                <a href="{{url_for('package_edit', id=package.id)}}">Edit</a>
+            </div>
+        </div>
 
-            <div class="col-md-8 form-group-sm form-group">
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="list-inline">
+                    {% for item in package.alt_names %}
+                    <li>{{item.name}}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 form-group-sm form-group">
                 <br>
                 <form class="form-inline" method="POST" action="{{ url_for('package_show', id=package.id)}}" role="form">
                     {{ form.hidden_tag() }}
                     {{ render_field(form.name, class="form-control input-sm") }}
                     <button type="submit" class="btn btn-primary btn-sm">Add</button>
                 </form>
-            </div>  
-
-            <div class="row">
-                <div class="col-md-12">
-                    <ul class="list-inline">
-                        {% for item in package.alt_names %}
-                        <li>{{item.name}}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
             </div>
-            <div class="row">
-      
-            </div>
+        </div>  
+        <div class="row">
+    
+        </div>
 
-            <hr>
-            Pin Count:  {{package.pin_count}}
-            <hr>
+        <hr>
+        Pin Count:  {{package.pin_count}}
+        <hr>
 
-            <h4>used by parts</h4>
-            <ul class="list-inline">
+        <h4>used by parts</h4>
+        <div class="table-responsive">
+            <table class="table table-sm table-hover">
                 {% for item in package.parts %}
-                <li><a class="block" href="{{url_for('part_show', id=item.id)}}">{{item.ordering_code}}</a></li>
+                <tr>
+                <td><a class="block" href="{{url_for('part_show', id=item.id)}}">{{item.ordering_code}}</a></td>
+                </tr>
                 {% endfor %}
-            </ul>
+    
+            </table>
         </div>
     </div>
 </div>

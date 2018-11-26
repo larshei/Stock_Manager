@@ -8,18 +8,20 @@
 
 {% block content %}
 
-<div class="row">  
-    <div class="col-md-offset-3 col-md-6 item-list">
-        <ul class="list-inline">
+    <div class="col-md-12 item-list">
+        <h1>Part Overview</h1>
+        <div class="navbar">
+        <ul class="list-inline navbar-nav ">
             <li><a href="{{url_for('part_downloadXls')}}">Download</a></li>
             <li><a href="{{url_for('file_upload')}}">Upload</a></li>
             <li><a href="{{url_for('part_add')}}">Add Part</a></li>
-        </ul>                 
+        </ul> 
+        </div>  
+        <hr>              
     </div>
     {% for item in parts %}
     <div class="col-md-12">
         <a href="{{url_for('part_show', id=item.id)}}">{{item.ordering_code}}</a>
     </div>
     {% endfor %}
-</div>
 {% endblock %}

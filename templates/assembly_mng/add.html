@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if action=="edit" %}Edit {{assembly.name}}
+{% else %} Add Assembly
+{% endif %}
+{% endblock %}
+
+{% from "_formhelpers.html" import render_field %}
+
+{% block content %}
+
+<div class="col-md-offset-3 col-md-6">
+    {% if action=="edit" %}
+        <h2>Edit '{{assembly.name}}'</h2>
+        <form method="POST" action="{{ url_for('assembly_edit', id=assembly.id)}}" role="form">
+    {%else%}
+        <h2>Add Assembly</h2>
+        <form method="POST" action="{{ url_for('assembly_add')}}" role="form">
+    {%endif%}
+    </div>
+    <div class="col-md-offset-3 col-md-5">
+            {{ render_field(form.name,              class='form-control') }}
+    </div>
+    <div class="col-md-1">
+            {{ render_field(form.revision,          class='form-control') }}
+    </div>
+    <div class="col-md-6 col-md-offset-3">
+        {{ form.hidden_tag() }}
+        {{ render_field(form.description,           class='form-control') }}
+    </div>
+    <div class="col-md-2 col-md-offset-3">
+        {{ render_field(form.engineerSch,           class='form-control') }}
+    </div>
+    <div class="col-md-2">
+            {{ render_field(form.engineerPcb,       class='form-control') }}
+    </div>
+    <div class="col-md-2">
+            {{ render_field(form.year,              class='form-control') }}
+    </div>
+    <div class="col-md-offset-3 col-md-6">
+        {% if action=="edit" %}<button type="submit" class="btn btn-primary">Edit</button>
+        {% else %}<button type="submit" class="btn btn-primary">Add Assembly</button>
+        {% endif %}   
+    </form>
+    </div>
+</div>
+{% endblock %}

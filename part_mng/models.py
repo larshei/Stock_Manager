@@ -7,18 +7,23 @@ class Part(db.Model):
     ordering_code   = db.Column(db.String(40), unique=True)
     case_id         = db.Column(db.Integer, db.ForeignKey('package.id'))
     description     = db.Column(db.String(100))
-    category   = db.Column(db.Integer, db.ForeignKey('part_category.id'))
+    category        = db.Column(db.Integer, db.ForeignKey('part_category.id'))
+    recommended     = db.Column(db.Boolean)
+
+    assemblies      = db.relationship('Assembly', secondary='assembly_part_association', backref='part', lazy='dynamic')
+
 
     def __init__(self, name, manufacturer, ordering_code, case_id, description="", category=None):
         self.name           = name
         self.manufacturer   = manufacturer
-        self.ordering_code   = ordering_code
+        self.ordering_code  = ordering_code
         self.case_id        = case_id
         self.description    = description
         self.category       = category
 
     def __repr__(self):
         return '<Part: %r %r>' % (self.manufacturer, self.ordering_code) 
+
 
 # class DistributorOfPart(db.Model):
 #     id              = db.Column(db.Integer, primary_key=True)

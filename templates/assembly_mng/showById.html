@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}{{assembly.name}}{% endblock %}
+
+{% from "_formhelpers.html" import render_field %}
+
+{% block content %}
+
+        <div class="row">
+            <div class="col-md-offset-2 col-md-10">
+                <div class="row">
+                    <h2>{{assembly.name}}</h2> 
+                    {{assembly.description}}<br>
+                    <a href="{{url_for('assembly_edit',id=assembly.id)}}">Edit</a><br>
+                    <hr>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 form-group-sm form-group">
+                        <form class="form-inline" method="POST" action="{{ url_for('assembly_show', id=assembly.id)}}" role="form">
+                            {{ form.hidden_tag() }}
+                            {{ render_field(form.part_select, class="form-control input-sm") }}
+                            {{ render_field(form.quantity, class="form-control input-sm") }}
+                            <button type="submit" class="btn btn-primary btn-sm">Add</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                        <tr>
+                            <th>Parts</th>
+                        </tr>
+                        {% for part in assembly.parts %}
+                        <tr>
+                            <td><a href="{{url_for('part_show',id=part.id)}}">{{part.name}}</a></td>
+                            <td><a href="{{url_for('part_show',id=part.id)}}">{{quantity}}</a></td>
+                        </tr>
+                        {% endfor %}
+            
+                        </table>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+
+
+{% endblock %}

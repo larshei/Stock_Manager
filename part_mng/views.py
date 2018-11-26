@@ -1,8 +1,8 @@
 from Stock_Manager import app, db
-from part_mng.form import PartAddForm
+from part_mng.forms import PartAddForm
 from part_mng.models import Part
+from part_mng.helpers import create_category_from_partAdd_form
 from categories.models import PartCategory
-from categories.helpers import get_or_create_category_id
 from package_mng.models import Package
 from flask import render_template, redirect, session, request, url_for, flash
 
@@ -15,7 +15,8 @@ from flask import render_template, redirect, session, request, url_for, flash
 def part_add():
     form = PartAddForm()
     if form.validate_on_submit():
-        category_id = get_or_create_category_id(form)
+         
+        category_id = create_category_from_partAdd_form(form)
 
         part = Part(
             form.name.data,
@@ -27,7 +28,8 @@ def part_add():
         db.session.add(part)
         db.session.commit()
         return redirect(url_for('part_show', id=part.id))
-    return render_template("part_mng/add.html", form=form);
+    print "\nform not validated\n"
+    return render_template("part_mng/add.html", form=form)
 
 
 @app.route('/part')
@@ -37,9 +39,7 @@ def part_showAll():
 
 @app.route('/part/<int:id>')
 def part_show(id):
-    part = Part.query.get(id)
-    if part is None:
-        return render_template("404.html", message="The Part ID could not be found in the Database")
+    part = Part.query.filter_by(id=id).first_or_404()
     return render_template('/part_mng/showById.html', part=part)
 
 @app.route('/part/<int:id>/edit', methods=['GET','POST'])
