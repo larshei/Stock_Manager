@@ -30,7 +30,7 @@
                         <tr>
                             <th>Parts</th>
                         </tr>
-                        {% for part in assembly.parts %}
+                        {% for part in assembly.parts %} 
                         <tr>
                             <td><a href="{{url_for('part_show',id=part.id)}}">{{part.name}}</a></td>
                             <td><a href="{{url_for('part_show',id=part.id)}}">{{quantity}}</a></td>

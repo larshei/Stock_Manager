@@ -76,7 +76,6 @@ def package_show(id):
         name_list = form.name.data.replace(" ","").split(",")   # on acse multiple alternate ids were entered, lest split the string
         
         for alt_name in name_list:
-            print "\n\n %s \n\n" % alt_name
             already_exists_id = package_in_db_get_id_or_none(name=alt_name) # check if we already have a package or altpackage in the db with this name
             if already_exists_id:                               # do nothing if name is already used and print an error
                 flash("Package '%s' already exists in database! (See \"%s\")" \
