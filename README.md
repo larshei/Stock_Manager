@@ -17,7 +17,7 @@ track on what your time was spent on.
 - Check what systems/assemblies a component is used in
 
 ## Assembly Management
-Create or import assemblies. These are collections of components that specify
+- Create or import assemblies. These are collections of components that specify
 - which and how many components are used to build a system.
 - Search for and view assemblies
 - Import/Export bill of materials
@@ -40,8 +40,27 @@ Keep track of your stock:
    
 # Status
 
-> Currently broken due to not using fixed versions for dependencies.
-(means: still runs on my old system, but not when newly set up.)
+> Currently broken due to not using fixed versions for dependencies, see #1
+
+> This project was an effort based on me not being happy with how components
+> were "managed" in the company I worked at at the time. The companies boss
+> expected the employees to use components in new projects that have
+> previously been used whenever possible (as they were already tested and
+> most likely to be found somewhere in our storage boxes). However, there was
+> no easy way to find out what components have been used in numerous projects
+> over the last years, as we just had a
+> bunch of bill of material excel tables, burried in network folders for each
+> project.
+> 
+> I tried to address the issue multiple times, until I started this project. On
+> presenting the state this software is currently in, the reaction was "no not
+> another tool!" and they started manually merging all excel tables to one huge
+> master table.
+> 
+> I lost the motivation to continue this project and will probably not pick it
+> up again, as I would rather use Elixir/Phoenix and a Graph Database nowadays.
+
+# Setup
 
 - create a virtual environment and activate it
 ``` bash
