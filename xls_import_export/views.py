@@ -1,8 +1,8 @@
 import os
 from Stock_Manager import app, db
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 from openpyxl import Workbook, load_workbook
-from openpyxl.utils import column_index_from_string, coordinate_from_string
+from openpyxl.utils.cell import column_index_from_string, coordinate_from_string
 from datetime import datetime
 from part_mng.models import Part
 from part_mng.helpers import find_part_in_db
